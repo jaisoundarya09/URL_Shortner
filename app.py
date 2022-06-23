@@ -33,6 +33,19 @@ def shortenUrlUtil():
 def create_tables():
     db.create_all()
 
+@app.route('/<generatedUrl>')
+def useShortUrl(generatedUrl):
+    originalUrl = Urls.query.filter_by(shortUrl=generatedUrl).first()
+    if originalUrl:
+        return redirect(originalUrl.longUrl)
+    else:
+        return f'<h2>Url doesnt exist</h2>'
+
+
+@app.route('/url/<url>')
+def displayUrl(url):
+    return render_template('urlDisplay.html', generatedUrl = url)
+
 @app.route('/', methods=['POST','GET'])
 def home():
     if request.method == 'POST':
@@ -40,14 +53,14 @@ def home():
         urlExists = Urls.query.filter_by(longUrl=url).first()
         if urlExists:
             #return corresponding shortURL
-            return f"{urlExists.shortUrl}"
+            return redirect(url_for("displayUrl", url = urlExists.shortUrl))
         else:
             #create a new short url
             shortURL = shortenUrlUtil()
             newUrl = Urls(shortURL, url)
             db.session.add(newUrl)
             db.session.commit()
-            return shortURL
+            return redirect(url_for("displayUrl", url = urlExists.shortUrl))
     else:
         return render_template("home.html")
 
