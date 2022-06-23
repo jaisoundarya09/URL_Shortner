@@ -1,0 +1,56 @@
+from flask import Flask, redirect, request, render_template, url_for
+from flask_sqlalchemy import SQLAlchemy
+import random
+import string
+import os
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///urlShortner.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+class Urls(db.Model):
+    id_ = db.Column("id_", db.Integer, primary_key=True)
+    shortUrl = db.Column("shortUrl", db.String(5))
+    longUrl = db.Column("longUrl", db.String())
+    
+
+    def __init__(self, shortUrl, longUrl):
+        self.shortUrl = shortUrl
+        self.longUrl = longUrl
+
+def shortenUrlUtil():
+    allAlphabets = string.ascii_lowercase + string.ascii_uppercase
+    while True:
+        randAlphabets = random.choices(allAlphabets, k=5)
+        randAlphabets = "".join(randAlphabets)
+        shortUrl = Urls.query.filter_by(shortUrl=randAlphabets).first()
+        if not shortUrl:
+            return randAlphabets
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
+@app.route('/', methods=['POST','GET'])
+def home():
+    if request.method == 'POST':
+        url = request.form['urlInput']
+        urlExists = Urls.query.filter_by(longUrl=url).first()
+        if urlExists:
+            #return corresponding shortURL
+            return f"{urlExists.shortUrl}"
+        else:
+            #create a new short url
+            shortURL = shortenUrlUtil()
+            newUrl = Urls(shortURL, url)
+            db.session.add(newUrl)
+            db.session.commit()
+            return shortURL
+    else:
+        return render_template("home.html")
+
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
