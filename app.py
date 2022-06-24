@@ -44,7 +44,7 @@ def useShortUrl(generatedUrl):
 
 @app.route('/url/<url>')
 def displayUrl(url):
-    return render_template('urlDisplay.html', generatedUrl = url)
+    return render_template('urlDisplay.html', generatedUrl = url,  urls=Urls.query.all())
 
 @app.route('/', methods=['POST','GET'])
 def home():
@@ -60,9 +60,10 @@ def home():
             newUrl = Urls(shortURL, url)
             db.session.add(newUrl)
             db.session.commit()
+            urlExists = Urls.query.filter_by(longUrl=url).first()
             return redirect(url_for("displayUrl", url = urlExists.shortUrl))
     else:
-        return render_template("home.html")
+        return render_template("home.html", urls = Urls.query.all())
 
 
 if __name__ == '__main__':
