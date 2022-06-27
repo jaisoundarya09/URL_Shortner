@@ -6,7 +6,7 @@ import os
 
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///urlShortner.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://vfpwebvhuqaogb:b40b465e603213758ea12bc8b713e22c454b84e2b5b05ec42ac9dd4c832cc9fc@ec2-23-23-151-191.compute-1.amazonaws.com:5432/degntm4jpgkmjg'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///urlShortner.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
