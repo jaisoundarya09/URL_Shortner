@@ -5,7 +5,7 @@ import string
 import os
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///urlShortner.db'
+#app.config['SQLALCHEMY_DATABASE_URI']  'sqlite:///urlShortner.db'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///urlShortner.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
